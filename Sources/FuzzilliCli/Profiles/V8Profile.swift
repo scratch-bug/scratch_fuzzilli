@@ -339,7 +339,7 @@ let v8Profile = Profile(
 
     disabledCodeGenerators: [],
 
-    // disabledMutators: ["ExplorationMutator", "CodeGenMutator", "SpliceMutator", "ProbingMutator", "InputMutator (loose)", "InputMutator (aware)", "OperationMutator", "CombineMutator"],
+    // disabledMutators: ["DoubleSmiNormalizerMutator","ExplorationMutator", "CodeGenMutator", "SpliceMutator", "ProbingMutator", "InputMutator (loose)", "InputMutator (aware)", "OperationMutator", "CombineMutator"],
     disabledMutators: [],
 
     additionalBuiltins: [
