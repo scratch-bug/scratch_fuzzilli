@@ -234,6 +234,10 @@ public class JavaScriptLifter: Lifter {
                            "Program is \(FuzzILLifter().lift(program, withOptions: .includeComments))\n" +
                            "Dying now.")
             }
+            // guard let inputs = w.retrieve(expressionsFor: instr.inputs) else {
+            //    logger.warning("Lifter: skipping invalid instruction \(instr) (missing expressions for \(instr.inputs))")
+            //    return "// invalid program dropped by lifter\n"
+            // }
             var nextExpressionToFetch = 0
             func input(_ i: Int) -> Expression {
                 assert(i == nextExpressionToFetch)
