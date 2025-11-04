@@ -398,6 +398,7 @@ func makeFuzzer(with configuration: Configuration) -> Fuzzer {
         (CombineMutator(),                     1),
         // (DoubleSmiNormalizerMutator(),        2),
         (ElementsKindStepperMutator(),        2),
+        (ICTransitionMutator(),                  2),
         // Include this once it does more than just remove unneeded try-catch
         // (FixupMutator()),                   1),
     ])
