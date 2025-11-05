@@ -339,8 +339,8 @@ let v8Profile = Profile(
 
     disabledCodeGenerators: [],
 
-    disabledMutators: ["ExplorationMutator", "CodeGenMutator", "SpliceMutator", "ProbingMutator", "InputMutator (loose)", "InputMutator (aware)", "OperationMutator", "CombineMutator"],
-    // disabledMutators: [],
+    // disabledMutators: ["ExplorationMutator", "CodeGenMutator", "SpliceMutator", "ProbingMutator", "InputMutator (loose)", "InputMutator (aware)", "OperationMutator", "CombineMutator"],
+    disabledMutators: [],
 
     additionalBuiltins: [
         "gc"                                            : .function([.opt(gcOptions.instanceType)] => (.undefined | .jsPromise)),
