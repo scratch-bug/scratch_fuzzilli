@@ -16,7 +16,9 @@ public class ICTransitionMutator: BaseInstructionMutator {
     public override func mutate(_ instr: Instruction, _ b: ProgramBuilder) {
         b.adopt(instr)
 
-        guard let obj = firstOutput(of: instr) else { return }
+        guard let raw = firstOutput(of: instr) else { return }
+
+        let obj = b.adopt(raw)
 
         switch Int.random(in: 0..<3) {
         case 0:

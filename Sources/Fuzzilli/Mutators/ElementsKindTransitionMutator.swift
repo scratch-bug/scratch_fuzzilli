@@ -69,7 +69,10 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
         if instr.op is CreateIntArray || instr.op is CreateFloatArray || instr.op is CreateArray {
             // Always adopt the array first
             
-            guard instr.outputs.count >= 1 else { return }
+            guard instr.outputs.count >= 1 else {  
+                // b.adopt(instr)
+                return
+            }
 
             let parentOut = instr.outputs.first!
 
