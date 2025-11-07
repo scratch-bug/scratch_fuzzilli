@@ -82,4 +82,25 @@ message Statistics {
 
         /// The timeout rate of recently generated programs (number of timeouts divided by number of generated programs).
         double timeoutRate = 17;
+
+        /// Average number of elements transitions per execution.
+        double avgElementsTransitionCount = 18;
+
+        /// Average number of IC transitions per execution.
+        double avgIcTransitionCount = 19;
+
+        /// Average number of normalizations per execution.
+        double avgNormalizationCount = 20;
+
+        /// Average number of deoptimizations per execution.
+        double avgDeoptCount = 21;
+
+        /// Average number of GC events per execution.
+        double avgGcCount = 22;
+
+        /// Average number of migrations per execution.
+        double avgMigrateCount = 23;
+
+        /// Average number of generalizations per execution.
+        double avgGeneralizationCount = 24;
 }

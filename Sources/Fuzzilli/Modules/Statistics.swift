@@ -56,6 +56,11 @@ public class Statistics: Module {
     /// Moving average of the number of timeouts in the last 1000 generated programs.
     private var timeoutRate = MovingAverage(n: 1000)
 
+    /// Moving averages for state transition traces.
+    private var transitionAverages: [TraceEventType: MovingAverage] = Dictionary(
+        uniqueKeysWithValues: TraceEventType.allCases.map { ($0, MovingAverage(n: 1000)) }
+    )
+
     /// All data from connected nodes.
     private var nodes = [UUID: Fuzzilli_Protobuf_Statistics]()
 
@@ -85,6 +90,13 @@ public class Statistics: Module {
         ownData.minimizationOverhead = minimizationOverheadAvg.currentValue
         ownData.correctnessRate = correctnessRate.currentValue
         ownData.timeoutRate = timeoutRate.currentValue
+        ownData.avgElementsTransitionCount = transitionAverages[.elementsTransition]?.currentValue ?? 0
+        ownData.avgIcTransitionCount = transitionAverages[.icTransition]?.currentValue ?? 0
+        ownData.avgNormalizationCount = transitionAverages[.normalization]?.currentValue ?? 0
+        ownData.avgDeoptCount = transitionAverages[.deoptimization]?.currentValue ?? 0
+        ownData.avgGcCount = transitionAverages[.garbageCollection]?.currentValue ?? 0
+        ownData.avgMigrateCount = transitionAverages[.migration]?.currentValue ?? 0
+        ownData.avgGeneralizationCount = transitionAverages[.generalization]?.currentValue ?? 0
 
         // Compute global statistics data
         var data = ownData
@@ -113,6 +125,13 @@ public class Statistics: Module {
                 data.minimizationOverhead += node.minimizationOverhead * numNodesRepresentedByData
                 data.correctnessRate += node.correctnessRate * numNodesRepresentedByData
                 data.timeoutRate += node.timeoutRate * numNodesRepresentedByData
+                data.avgElementsTransitionCount += node.avgElementsTransitionCount * numNodesRepresentedByData
+                data.avgIcTransitionCount += node.avgIcTransitionCount * numNodesRepresentedByData
+                data.avgNormalizationCount += node.avgNormalizationCount * numNodesRepresentedByData
+                data.avgDeoptCount += node.avgDeoptCount * numNodesRepresentedByData
+                data.avgGcCount += node.avgGcCount * numNodesRepresentedByData
+                data.avgMigrateCount += node.avgMigrateCount * numNodesRepresentedByData
+                data.avgGeneralizationCount += node.avgGeneralizationCount * numNodesRepresentedByData
             }
 
             // All other fields are already indirectly synchronized (e.g. number of interesting samples founds)
@@ -128,6 +147,13 @@ public class Statistics: Module {
         data.minimizationOverhead /= totalNumberOfNodes
         data.correctnessRate /= totalNumberOfNodes
         data.timeoutRate /= totalNumberOfNodes
+        data.avgElementsTransitionCount /= totalNumberOfNodes
+        data.avgIcTransitionCount /= totalNumberOfNodes
+        data.avgNormalizationCount /= totalNumberOfNodes
+        data.avgDeoptCount /= totalNumberOfNodes
+        data.avgGcCount /= totalNumberOfNodes
+        data.avgMigrateCount /= totalNumberOfNodes
+        data.avgGeneralizationCount /= totalNumberOfNodes
 
         return data
     }
@@ -174,6 +200,13 @@ public class Statistics: Module {
 
             let overhead = 1.0 - (exec.execTime / totalTime)
             self.fuzzerOverheadAvg.add(overhead)
+
+            let transitionCounts = TraceEventScorer.eventCounts(stdout: exec.stdout, stderr: exec.stderr)
+            for event in TraceEventType.allCases {
+                var avg = self.transitionAverages[event]!
+                avg.add(Double(transitionCounts[event] ?? 0))
+                self.transitionAverages[event] = avg
+            }
         }
         fuzzer.registerEventListener(for: fuzzer.events.InterestingProgramFound) { ev in
             self.ownData.interestingSamples += 1

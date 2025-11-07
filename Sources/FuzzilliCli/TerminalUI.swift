@@ -125,6 +125,22 @@ class TerminalUI {
         } else {
             print("Fuzzer Statistics")
         }
+
+        func avgTransitionCount(for event: TraceEventType) -> Double {
+            switch event {
+            case .elementsTransition: return stats.avgElementsTransitionCount
+            case .icTransition: return stats.avgIcTransitionCount
+            case .normalization: return stats.avgNormalizationCount
+            case .garbageCollection: return stats.avgGcCount
+            case .deoptimization: return stats.avgDeoptCount
+            case .generalization: return stats.avgGeneralizationCount
+            case .migration: return stats.avgMigrateCount
+            }
+        }
+
+        let transitionSummary = TraceEventType.allCases.map { event in
+            "\(event.cliLabel): \(String(format: "%.2f", avgTransitionCount(for: event)))"
+        }.joined(separator: ", ")
         print("""
         -----------------
         Fuzzer state:                 \(state)
@@ -141,6 +157,7 @@ class TerminalUI {
         Coverage:                     \(String(format: "%.2f%%", stats.coverage * 100))
         Avg. program size:            \(String(format: "%.2f", stats.avgProgramSize))
         Avg. corpus program size:     \(String(format: "%.2f", stats.avgCorpusProgramSize))
+        State transitions (avg/exec): \(transitionSummary)
         Avg. program execution time:  \(Int(stats.avgExecutionTime * 1000))ms
         Connected nodes:              \(stats.numChildNodes)
         Execs / Second:               \(String(format: "%.2f", stats.execsPerSecond))

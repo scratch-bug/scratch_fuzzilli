@@ -177,6 +177,48 @@ public struct Fuzzilli_Protobuf_Statistics: @unchecked Sendable {
     set {_uniqueStorage()._timeoutRate = newValue}
   }
 
+  //// Average number of elements transitions per execution.
+  public var avgElementsTransitionCount: Double {
+    get {return _storage._avgElementsTransitionCount}
+    set {_uniqueStorage()._avgElementsTransitionCount = newValue}
+  }
+
+  //// Average number of IC transitions per execution.
+  public var avgIcTransitionCount: Double {
+    get {return _storage._avgIcTransitionCount}
+    set {_uniqueStorage()._avgIcTransitionCount = newValue}
+  }
+
+  //// Average number of normalizations per execution.
+  public var avgNormalizationCount: Double {
+    get {return _storage._avgNormalizationCount}
+    set {_uniqueStorage()._avgNormalizationCount = newValue}
+  }
+
+  //// Average number of deoptimizations per execution.
+  public var avgDeoptCount: Double {
+    get {return _storage._avgDeoptCount}
+    set {_uniqueStorage()._avgDeoptCount = newValue}
+  }
+
+  //// Average number of garbage collections per execution.
+  public var avgGcCount: Double {
+    get {return _storage._avgGcCount}
+    set {_uniqueStorage()._avgGcCount = newValue}
+  }
+
+  //// Average number of migrations per execution.
+  public var avgMigrateCount: Double {
+    get {return _storage._avgMigrateCount}
+    set {_uniqueStorage()._avgMigrateCount = newValue}
+  }
+
+  //// Average number of generalizations per execution.
+  public var avgGeneralizationCount: Double {
+    get {return _storage._avgGeneralizationCount}
+    set {_uniqueStorage()._avgGeneralizationCount = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -275,7 +317,32 @@ extension Fuzzilli_Protobuf_FuzzerState: SwiftProtobuf.Message, SwiftProtobuf._M
 
 extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Statistics"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}totalSamples\0\u{1}validSamples\0\u{1}interestingSamples\0\u{1}timedOutSamples\0\u{1}crashingSamples\0\u{1}totalExecs\0\u{1}avgCorpusSize\0\u{1}avgProgramSize\0\u{1}avgCorpusProgramSize\0\u{1}avgExecutionTime\0\u{1}execsPerSecond\0\u{1}fuzzerOverhead\0\u{1}minimizationOverhead\0\u{1}numChildNodes\0\u{1}coverage\0\u{1}correctnessRate\0\u{1}timeoutRate\0")
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: "totalSamples",
+    2: "validSamples",
+    3: "interestingSamples",
+    4: "timedOutSamples",
+    5: "crashingSamples",
+    6: "totalExecs",
+    7: "avgCorpusSize",
+    8: "avgProgramSize",
+    9: "avgCorpusProgramSize",
+    10: "avgExecutionTime",
+    11: "execsPerSecond",
+    12: "fuzzerOverhead",
+    13: "minimizationOverhead",
+    14: "numChildNodes",
+    15: "coverage",
+    16: "correctnessRate",
+    17: "timeoutRate",
+    18: "avgElementsTransitionCount",
+    19: "avgIcTransitionCount",
+    20: "avgNormalizationCount",
+    21: "avgDeoptCount",
+    22: "avgGcCount",
+    23: "avgMigrateCount",
+    24: "avgGeneralizationCount",
+  ]
 
   fileprivate class _StorageClass {
     var _totalSamples: UInt64 = 0
@@ -295,6 +362,13 @@ extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._Me
     var _coverage: Double = 0
     var _correctnessRate: Double = 0
     var _timeoutRate: Double = 0
+    var _avgElementsTransitionCount: Double = 0
+    var _avgIcTransitionCount: Double = 0
+    var _avgNormalizationCount: Double = 0
+    var _avgDeoptCount: Double = 0
+    var _avgGcCount: Double = 0
+    var _avgMigrateCount: Double = 0
+    var _avgGeneralizationCount: Double = 0
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -322,6 +396,13 @@ extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._Me
       _coverage = source._coverage
       _correctnessRate = source._correctnessRate
       _timeoutRate = source._timeoutRate
+      _avgElementsTransitionCount = source._avgElementsTransitionCount
+      _avgIcTransitionCount = source._avgIcTransitionCount
+      _avgNormalizationCount = source._avgNormalizationCount
+      _avgDeoptCount = source._avgDeoptCount
+      _avgGcCount = source._avgGcCount
+      _avgMigrateCount = source._avgMigrateCount
+      _avgGeneralizationCount = source._avgGeneralizationCount
     }
   }
 
@@ -357,6 +438,13 @@ extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._Me
         case 15: try { try decoder.decodeSingularDoubleField(value: &_storage._coverage) }()
         case 16: try { try decoder.decodeSingularDoubleField(value: &_storage._correctnessRate) }()
         case 17: try { try decoder.decodeSingularDoubleField(value: &_storage._timeoutRate) }()
+        case 18: try { try decoder.decodeSingularDoubleField(value: &_storage._avgElementsTransitionCount) }()
+        case 19: try { try decoder.decodeSingularDoubleField(value: &_storage._avgIcTransitionCount) }()
+        case 20: try { try decoder.decodeSingularDoubleField(value: &_storage._avgNormalizationCount) }()
+        case 21: try { try decoder.decodeSingularDoubleField(value: &_storage._avgDeoptCount) }()
+        case 22: try { try decoder.decodeSingularDoubleField(value: &_storage._avgGcCount) }()
+        case 23: try { try decoder.decodeSingularDoubleField(value: &_storage._avgMigrateCount) }()
+        case 24: try { try decoder.decodeSingularDoubleField(value: &_storage._avgGeneralizationCount) }()
         default: break
         }
       }
@@ -416,6 +504,27 @@ extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._Me
       if _storage._timeoutRate.bitPattern != 0 {
         try visitor.visitSingularDoubleField(value: _storage._timeoutRate, fieldNumber: 17)
       }
+      if _storage._avgElementsTransitionCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgElementsTransitionCount, fieldNumber: 18)
+      }
+      if _storage._avgIcTransitionCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgIcTransitionCount, fieldNumber: 19)
+      }
+      if _storage._avgNormalizationCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgNormalizationCount, fieldNumber: 20)
+      }
+      if _storage._avgDeoptCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgDeoptCount, fieldNumber: 21)
+      }
+      if _storage._avgGcCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgGcCount, fieldNumber: 22)
+      }
+      if _storage._avgMigrateCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgMigrateCount, fieldNumber: 23)
+      }
+      if _storage._avgGeneralizationCount.bitPattern != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._avgGeneralizationCount, fieldNumber: 24)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -442,6 +551,13 @@ extension Fuzzilli_Protobuf_Statistics: SwiftProtobuf.Message, SwiftProtobuf._Me
         if _storage._coverage != rhs_storage._coverage {return false}
         if _storage._correctnessRate != rhs_storage._correctnessRate {return false}
         if _storage._timeoutRate != rhs_storage._timeoutRate {return false}
+        if _storage._avgElementsTransitionCount != rhs_storage._avgElementsTransitionCount {return false}
+        if _storage._avgIcTransitionCount != rhs_storage._avgIcTransitionCount {return false}
+        if _storage._avgNormalizationCount != rhs_storage._avgNormalizationCount {return false}
+        if _storage._avgDeoptCount != rhs_storage._avgDeoptCount {return false}
+        if _storage._avgGcCount != rhs_storage._avgGcCount {return false}
+        if _storage._avgMigrateCount != rhs_storage._avgMigrateCount {return false}
+        if _storage._avgGeneralizationCount != rhs_storage._avgGeneralizationCount {return false}
         return true
       }
       if !storagesAreEqual {return false}
