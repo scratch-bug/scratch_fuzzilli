@@ -48,7 +48,7 @@ public enum TraceEventType: CaseIterable, Hashable {
         }
     }
 
-    var cliLabel: String {
+    public var cliLabel: String {
         switch self {
         case .elementsTransition: return "Elements Transition"
         case .icTransition: return "IC Transition"

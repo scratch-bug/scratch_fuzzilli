@@ -8,6 +8,8 @@ Package.resolved
 .swiftpm
 hyeong7/*
 hyeong7
+hyeong7guy/*
+hyeong7guy
 # custom GCE configuration
 Cloud/GCE/config.sh
 
