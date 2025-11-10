@@ -39,7 +39,7 @@ enum TraceEventScorer {
             case .normalization:
                 return ["object properties have been normalized", "object elements have been normalized"]
             case .garbageCollection:
-                return ["scavenger", "mark-sweep-compact", "minor mark-sweep"]
+                return ["(average mu"]
             case .deoptimization:
                 return ["deoptimization", "deoptimize"]
             case .generalization:
