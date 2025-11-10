@@ -46,6 +46,7 @@ public class ICTransitionMutator: BaseInstructionMutator {
            instr.op is CreateArray ||
            instr.op is CreateIntArray ||
            instr.op is CreateFloatArray ||
+           instr.op is CreateObject ||
            instr.op is CreateArrayWithSpread {
             return instr.outputs.count > 0 || instr.numOutputs > 0
         }
@@ -73,6 +74,7 @@ public class ICTransitionMutator: BaseInstructionMutator {
            instr.op is CreateArray ||
            instr.op is CreateIntArray ||
            instr.op is CreateFloatArray ||
+           instr.op is CreateObject ||
            instr.op is CreateArrayWithSpread {
             raw = firstOutput(of: instr)
         } else if instr.op is GetProperty ||
