@@ -1,1 +1,0 @@
-%PretenureAllocationSite(Uint8Array);

@@ -1,9 +1,0 @@
-const v1 = /[a\wKA[\xf0\x9f\x92\xa9-\xf4\x8f\xbf\xbf]+]/sgid;
-const v3 = {};
-v3.h = v1;
-v3.g = 76;
-const v4 = {};
-v4.h = v1;
-v4.a = Float32Array;
-const v5 = {};
-v5.h = v5;

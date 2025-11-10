@@ -1,2 +1,0 @@
-Math.acos([]);
-Math.asin();
