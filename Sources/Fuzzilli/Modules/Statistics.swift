@@ -56,10 +56,11 @@ public class Statistics: Module {
     /// Moving average of the number of timeouts in the last 1000 generated programs.
     private var timeoutRate = MovingAverage(n: 1000)
 
-    /// Moving averages for state transition traces.
-    private var transitionAverages: [TraceEventType: MovingAverage] = Dictionary(
-        uniqueKeysWithValues: TraceEventType.allCases.map { ($0, MovingAverage(n: 1000)) }
+    /// Cumulative totals for state transition traces.
+    private var transitionTotals: [TraceEventType: Double] = Dictionary(
+        uniqueKeysWithValues: TraceEventType.allCases.map { ($0, 0.0) }
     )
+    private var transitionSampleCount: Double = 0
 
     /// All data from connected nodes.
     private var nodes = [UUID: Fuzzilli_Protobuf_Statistics]()
@@ -90,13 +91,13 @@ public class Statistics: Module {
         ownData.minimizationOverhead = minimizationOverheadAvg.currentValue
         ownData.correctnessRate = correctnessRate.currentValue
         ownData.timeoutRate = timeoutRate.currentValue
-        ownData.avgElementsTransitionCount = transitionAverages[.elementsTransition]?.currentValue ?? 0
-        ownData.avgIcTransitionCount = transitionAverages[.icTransition]?.currentValue ?? 0
-        ownData.avgNormalizationCount = transitionAverages[.normalization]?.currentValue ?? 0
-        ownData.avgDeoptCount = transitionAverages[.deoptimization]?.currentValue ?? 0
-        ownData.avgGcCount = transitionAverages[.garbageCollection]?.currentValue ?? 0
-        ownData.avgMigrateCount = transitionAverages[.migration]?.currentValue ?? 0
-        ownData.avgGeneralizationCount = transitionAverages[.generalization]?.currentValue ?? 0
+        ownData.avgElementsTransitionCount = averageTransitionCount(for: .elementsTransition)
+        ownData.avgIcTransitionCount = averageTransitionCount(for: .icTransition)
+        ownData.avgNormalizationCount = averageTransitionCount(for: .normalization)
+        ownData.avgDeoptCount = averageTransitionCount(for: .deoptimization)
+        ownData.avgGcCount = averageTransitionCount(for: .garbageCollection)
+        ownData.avgMigrateCount = averageTransitionCount(for: .migration)
+        ownData.avgGeneralizationCount = averageTransitionCount(for: .generalization)
 
         // Compute global statistics data
         var data = ownData
@@ -202,10 +203,9 @@ public class Statistics: Module {
             self.fuzzerOverheadAvg.add(overhead)
 
             let transitionCounts = TraceEventScorer.eventCounts(stdout: exec.stdout, stderr: exec.stderr)
+            self.transitionSampleCount += 1
             for event in TraceEventType.allCases {
-                var avg = self.transitionAverages[event]!
-                avg.add(Double(transitionCounts[event] ?? 0))
-                self.transitionAverages[event] = avg
+                self.transitionTotals[event]! += Double(transitionCounts[event] ?? 0)
             }
         }
         fuzzer.registerEventListener(for: fuzzer.events.InterestingProgramFound) { ev in
@@ -286,6 +286,11 @@ public class Statistics: Module {
     /// Import statistics data from a child node.
     public func importData(_ stats: Fuzzilli_Protobuf_Statistics, from child: UUID) {
         nodes[child] = stats
+    }
+
+    private func averageTransitionCount(for event: TraceEventType) -> Double {
+        guard transitionSampleCount > 0 else { return 0 }
+        return transitionTotals[event]! / transitionSampleCount
     }
 }
 

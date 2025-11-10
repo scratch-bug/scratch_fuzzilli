@@ -1,0 +1,27 @@
+{
+  "processArguments" : [
+    "--expose-gc",
+    "--expose-externalize-string",
+    "--omit-quit",
+    "--allow-natives-syntax",
+    "--fuzzing",
+    "--jit-fuzzing",
+    "--future",
+    "--harmony",
+    "--experimental-fuzzing",
+    "--js-staging",
+    "--wasm-staging",
+    "--wasm-fast-api",
+    "--expose-fast-api",
+    "--experimental-wasm-rab-integration",
+    "--wasm-test-streaming",
+    "--trace-elements-transitions",
+    "--trace-normalization",
+    "--trace-gc",
+    "--trace-ic",
+    "--trace-opt",
+    "--trace-deopt",
+    "--trace-migration",
+    "--trace-generalization"
+  ]
+}
