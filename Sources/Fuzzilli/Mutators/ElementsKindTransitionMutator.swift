@@ -18,53 +18,52 @@ import Foundation
 /// various mutations that cause type transitions (Smi -> Double -> Object,
 /// Packed -> Holey, etc.)
 public class ElementsKindTransitionMutator: BaseInstructionMutator {
+    private var deadCodeAnalyzer = DeadCodeAnalyzer()
+    private var variableAnalyzer = VariableAnalyzer()
+    private var contextAnalyzer = ContextAnalyzer()
+    private let minVisibleVariables = 1
+
     public init() {
         super.init(name: "ElementsKindTransitionMutator", maxSimultaneousMutations: 2)
     }
 
+    public override func beginMutation(of program: Program) {
+        deadCodeAnalyzer = DeadCodeAnalyzer()
+        variableAnalyzer = VariableAnalyzer()
+        contextAnalyzer = ContextAnalyzer()
+    }
+
     public override func canMutate(_ instr: Instruction) -> Bool {
+        deadCodeAnalyzer.analyze(instr)
+        variableAnalyzer.analyze(instr)
+        contextAnalyzer.analyze(instr)
+        
+        // Don't mutate in dead code
+        guard !deadCodeAnalyzer.currentlyInDeadCode else {
+            return false
+        }
+        
+        // Need JavaScript context for array operations
+        guard contextAnalyzer.context.contains(.javascript) else {
+            return false
+        }
+        
+        // Need at least some visible variables to work with arrays
+        guard variableAnalyzer.visibleVariables.count >= minVisibleVariables else {
+            return false
+        }
+        
         // Target array creation, but ALSO array element access/setting operations
         // to catch IC/guard violations during element access after transitions
         return instr.op is CreateIntArray ||
                instr.op is CreateFloatArray ||
                instr.op is CreateArray ||
                instr.op is GetElement ||
-               instr.op is SetElement ||
-               instr.op is BeginForLoopInitializer ||
-               instr.op is BeginForLoopCondition ||
-               instr.op is BeginForLoopAfterthought ||
-               instr.op is UnaryOperation
-
+               instr.op is SetElement
     }
-
-    private var afterthoughtRoots: Set<Variable> = []
-    private var afterthoughtDerived: Set<Variable> = []
 
 
     public override func mutate(_ instr: Instruction, _ b: ProgramBuilder) {
-       if instr.op is BeginForLoopAfterthought {
-            if instr.outputs.count >= 1 {
-                afterthoughtRoots.insert(instr.output)
-            }
-            b.adopt(instr)
-            return
-        }
-
-        // propagate via ++/--
-        if let _ = instr.op as? UnaryOperation {
-            if instr.inputs.count >= 1 {
-                let base = instr.input(0)
-                if afterthoughtRoots.contains(base) || afterthoughtDerived.contains(base) {
-                    if instr.outputs.count >= 1 {
-                        afterthoughtDerived.insert(instr.output)
-                    }
-                }
-            }
-            b.adopt(instr)
-            return
-        }
-       
-
         // Case 1: Array creation - inject transition IMMEDIATELY after creation
         if instr.op is CreateIntArray || instr.op is CreateFloatArray || instr.op is CreateArray {
             // Always adopt the array first
@@ -82,7 +81,7 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
 
             b.trace("EKS: Injecting ElementsKind transition after array creation")
 
-            switch roll(6) {
+            switch roll(7) {
             case 0:
                 injectDoubleTransition(using: b, arrayVar)
             case 1:
@@ -95,6 +94,8 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
                 injectSpecialValues(using: b, arrayVar)
             case 5:
                 injectLengthManipulation(using: b, arrayVar)
+            // case 6:
+            //     injectDeletePopTransition(using: b, arrayVar)
             default:
                 break
             }
@@ -112,19 +113,12 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
             // The array is the first input
             guard instr.inputs.count >= 1 else { b.adopt(instr); return }
             let recv0 = instr.input(0)
-
-            // Fallback if receiver tainted by for-afterthought
-            if afterthoughtRoots.contains(recv0) || afterthoughtDerived.contains(recv0) {
-                b.adopt(instr)
-                return
-            }
-
             let arrayVar = b.adopt(recv0)
             
             b.trace("EKS: Injecting ElementsKind transition before element access")
 
             // Inject transition before the access (다음 접근들에 영향)
-            switch roll(6) {
+            switch roll(7) {
             case 0:
                 injectDoubleTransition(using: b, arrayVar)
             case 1:
@@ -137,6 +131,8 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
                 injectSpecialValues(using: b, arrayVar)
             case 5:
                 injectLengthManipulation(using: b, arrayVar)
+            case 6:
+                injectDeletePopTransition(using: b, arrayVar)
             default:
                 break
             }
@@ -172,14 +168,8 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
     // 3. Holey transition: delete element or large index
     private func injectHoleyTransition(using b: ProgramBuilder, _ arrayVar: Variable) {
         b.trace("EKS: Injecting Holey transition")
-        if probability(0.5) {
-            // Delete first element (index 0)
-            _ = b.deleteElement(0, of: arrayVar)
-        } else {
-            // Set large index to create holes
-            let val = b.loadInt(42)
-            b.setElement(0x100000, of: arrayVar, to: val)
-        }
+        let val = b.loadInt(42)
+        b.setElement(0x100000, of: arrayVar, to: val)
     }
 
     // 4. BigInt transition
@@ -209,6 +199,28 @@ public class ElementsKindTransitionMutator: BaseInstructionMutator {
             // Extend with holes
             let newLength = b.loadInt(100)
             b.setProperty("length", of: arrayVar, to: newLength)
+        }
+    }
+
+    // 7. Delete/Pop transition: remove elements using pop, shift, or delete
+    private func injectDeletePopTransition(using b: ProgramBuilder, _ arrayVar: Variable) {
+        b.trace("EKS: Injecting delete/pop transition")
+        switch roll(4) {
+        case 0:
+            // Pop last element
+            _ = b.callMethod("pop", on: arrayVar, withArgs: [])
+        case 1:
+            // Shift first element
+            _ = b.callMethod("shift", on: arrayVar, withArgs: [])
+        case 2:
+            // Delete element at index 0
+            _ = b.deleteElement(0, of: arrayVar)
+        case 3:
+            // Delete element at random small index
+            let index = Int64.random(in: 0..<10)
+            _ = b.deleteElement(index, of: arrayVar)
+        default:
+            break
         }
     }
 

@@ -4,20 +4,89 @@
 import Foundation
 
 public class ICTransitionMutator: BaseInstructionMutator {
+    private var deadCodeAnalyzer = DeadCodeAnalyzer()
+    private var variableAnalyzer = VariableAnalyzer()
+    private var contextAnalyzer = ContextAnalyzer()
+    private let minVisibleVariables = 1
+
     public init() {
         super.init(name: "ICTransitionMutator", maxSimultaneousMutations: 3)
     }
 
-    // 이 포크는 outputs/inouts가 Non-Optional ArraySlice 임.
+    public override func beginMutation(of program: Program) {
+        deadCodeAnalyzer = DeadCodeAnalyzer()
+        variableAnalyzer = VariableAnalyzer()
+        contextAnalyzer = ContextAnalyzer()
+    }
+
+    // Target object/array creation and access operations that benefit from IC transition mutations
     public override func canMutate(_ instr: Instruction) -> Bool {
-        return instr.outputs.count > 0 || instr.inouts.count > 0 || instr.numOutputs > 0
+        deadCodeAnalyzer.analyze(instr)
+        variableAnalyzer.analyze(instr)
+        contextAnalyzer.analyze(instr)
+        
+        // Don't mutate in dead code
+        guard !deadCodeAnalyzer.currentlyInDeadCode else {
+            return false
+        }
+        
+        // Need JavaScript context for object operations
+        guard contextAnalyzer.context.contains(.javascript) else {
+            return false
+        }
+        
+        // Need at least some visible variables to work with objects
+        guard variableAnalyzer.visibleVariables.count >= minVisibleVariables else {
+            return false
+        }
+        
+        // Target object/array creation operations
+        if instr.op is EndObjectLiteral ||
+           instr.op is Construct ||
+           instr.op is CreateArray ||
+           instr.op is CreateIntArray ||
+           instr.op is CreateFloatArray ||
+           instr.op is CreateArrayWithSpread {
+            return instr.outputs.count > 0 || instr.numOutputs > 0
+        }
+        
+        // Target object/array access operations that can trigger IC transitions
+        if instr.op is GetProperty ||
+           instr.op is SetProperty ||
+           instr.op is GetElement ||
+           instr.op is SetElement ||
+           instr.op is CallMethod {
+            return instr.inputs.count > 0
+        }
+        
+        return false
     }
 
     public override func mutate(_ instr: Instruction, _ b: ProgramBuilder) {
         b.adopt(instr)
 
-        guard let raw = firstOutput(of: instr) else { return }
+        // For creation operations, use the output (the created object/array)
+        // For access operations, use the first input (the accessed object/array)
+        let raw: Variable?
+        if instr.op is EndObjectLiteral ||
+           instr.op is Construct ||
+           instr.op is CreateArray ||
+           instr.op is CreateIntArray ||
+           instr.op is CreateFloatArray ||
+           instr.op is CreateArrayWithSpread {
+            raw = firstOutput(of: instr)
+        } else if instr.op is GetProperty ||
+                  instr.op is SetProperty ||
+                  instr.op is GetElement ||
+                  instr.op is SetElement ||
+                  instr.op is CallMethod {
+            // For access operations, the first input is the object/array
+            raw = instr.inputs.count > 0 ? instr.input(0) : nil
+        } else {
+            raw = nil
+        }
 
+        guard let raw = raw else { return }
         let obj = b.adopt(raw)
 
         switch Int.random(in: 0..<3) {
