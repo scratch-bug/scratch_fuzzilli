@@ -1,4 +1,4 @@
-# Fuzzilli
+# Scratch Fuzzilli
 
 A (coverage-)guided fuzzer for dynamic language interpreters based on a custom intermediate language ("FuzzIL") which can be mutated and translated to JavaScript.
 
