@@ -58,4 +58,5 @@ As of 2025-12-20, a total of 28 crashes were found, and 5 bugs were fixed, exclu
 ## Disclaimer
 
 This is not an officially supported Google product.
-Made by BOB 14th Scratch BugBug! Team.
+
+Customized by BOB 14th Scratch BugBug! Team.
