@@ -53,7 +53,7 @@ Through these improvements, the fuzzer is designed to induce a higher frequency 
 
 
 ## Result
-As of 2025-12-20, a total of 28 crashes were found, and 5 bugs were fixed, excluding duplication.
+As of 2025-12-20, a total of 28 crashes were found, and 5 bugs were fixed.
 
 ## Disclaimer
 
