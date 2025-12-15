@@ -1,6 +1,6 @@
 # Scratch Fuzzilli
 
-A state guided fuzzer that improves on the existing Fuzzilli (https://github.com/googleprojectzero/fuzzilli)
+A state aware fuzzer that improves on the existing Fuzzilli (https://github.com/googleprojectzero/fuzzilli)
 
 ## Usage
 
