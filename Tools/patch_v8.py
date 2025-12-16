@@ -102,6 +102,7 @@ def patch_js_objects_cc(v8_root: Path) -> bool:
         raise RuntimeError(f'anchor {anchor!r} not found near PrintInstanceMigration in {p}')
 
     region_after_anchor = search_region[a + len(anchor):]
+
     start_line = "Isolate* isolate = Isolate::Current();"
     b = region_after_anchor.find(start_line)
     if b < 0:
@@ -116,18 +117,31 @@ def patch_js_objects_cc(v8_root: Path) -> bool:
     if nl_after_end < 0:
         raise RuntimeError(f"newline not found after end_line in {p}")
 
-    close_brace_line = region_after_anchor.find("\n", nl_after_end + 1)
-    if close_brace_line < 0:
-        close_brace_line = nl_after_end
+    tail = region_after_anchor[nl_after_end + 1:]
+    m_brace = re.search(r'^[ \t]*\}[ \t]*\r?\n', tail, flags=re.MULTILINE)
+    if not m_brace:
+        raise RuntimeError(f"closing brace for elements_kind if-block not found after end_line in {p}")
+
+    brace_end_in_after = (nl_after_end + 1) + m_brace.end()
 
     start_idx = fn_start + a + len(anchor) + b
-    end_idx = fn_start + a + len(anchor) + nl_after_end + 1
+    end_idx = fn_start + a + len(anchor) + brace_end_in_after
 
     block = s[start_idx:end_idx]
     if "/*" in block or "*/" in block:
         raise RuntimeError(f"block already seems commented or contains comment markers in {p}")
 
-    s2 = s[:fn_start + a + len(anchor)] + "/*" + s[fn_start + a + len(anchor):start_idx] + block + "*/" + s[end_idx:]
+    anchor_end_abs = fn_start + a + len(anchor)
+
+    s2 = (
+        s[:anchor_end_abs] +
+        "/*" +
+        s[anchor_end_abs:start_idx] +
+        block +
+        "*/" +
+        s[end_idx:]
+    )
+
     backup_file(p)
     write_text(p, s2)
     return True
@@ -157,3 +171,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
