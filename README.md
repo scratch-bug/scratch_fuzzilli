@@ -1,5 +1,13 @@
 ![Scratch Fuzzilli Banner](assets/banner.png)
 
+<p align="center">
+  <img alt="Swift" src="https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white" />
+  <img alt="CodeQL" src="https://img.shields.io/badge/CodeQL-000000?style=for-the-badge&logo=github&logoColor=white" />
+  <img alt="Google Gemini" src="https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white" />
+  <img alt="Python" src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" />
+</p>
+
+
 A state aware fuzzer that improves on the existing Fuzzilli (https://github.com/googleprojectzero/fuzzilli)
 
 ## Usage
