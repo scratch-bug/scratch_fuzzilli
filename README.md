@@ -55,11 +55,15 @@ While standard Fuzzilli is a coverage-guided fuzzer, our Scratch Fuzzilli is a s
 An analysis of crashes found by Fuzzilli reveals a high frequency of Type Confusion vulnerabilities. These often occur during state transitions within V8, such as transitions from Packed to Holey or Smi to Double.
 The concept of state-aware fuzzing is well-documented in other domains. For instance, research on state-aware fuzzing targeting Linux drivers is available here. Motivated by this, we have enhanced Fuzzilli to focus on state transitions.
 
+<br>
+
 Key Improvements:
 1. AI-Generated Corpus (CodeQL): Although not detailed in this repository, we analyzed numerous 1-day state transition vulnerabilities and patterned them using CodeQL. We then utilized AI to generate a corpus specifically designed to traverse these vulnerable V8 code paths. (You can check ql queries at `/codeql/`)
 3. Weighted Corpus based on Transitions: We assigned weights to the corpus based on state transition types. By enabling specific d8 options (e.g., --trace-elements), V8 outputs logs corresponding to these transitions. Fuzzilli is configured to track and parse these logs directly to apply appropriate weights.
 4. State-Transition Mutators: We developed custom Mutators dedicated to state transitions. Currently, ElementsKindTransitionMutator and ICTransitionMutator are implemented, with plans to add more in the future.
 Note: Weights for specific state transitions and Mutators can be reconfigured by directly modifying the source code.
+![Fuzzer_Workflow](assets/fuzzing_workflow.png)
+
 
 Through these improvements, the fuzzer is designed to induce a higher frequency of vulnerable state transitions within the JavaScript engine.
 
