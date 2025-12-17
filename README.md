@@ -8,43 +8,51 @@
   <img alt="Python" src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" />
 </p>
 
+<hr>
 
-A state aware fuzzer that improves on the existing Fuzzilli (https://github.com/googleprojectzero/fuzzilli)
+## What is Scratch Fuzzilli?
+**Scratch Fuzzilli** is an enhanced, state-aware JavaScript fuzzer built upon the original **Fuzzilli**(https://github.com/googleprojectzero/fuzzilli). Like its predecessor, it is based on Swift but incorporates the following key improvements.
+- State Transition Corpus Generation: Generates corpora focused on state transitions using CodeQL and Gemini.
+- Weighted Corpus Scoring: Applies scoring bonuses to the corpus based on specific state transitions.
+- State Transition Mutator: Introduces a dedicated mutator designed to handle state transitions.
+<br>
 
-## Usage
-
+## Install
+Scratch Fuzzilli basically supports Linux(x64).<br>
 The basic steps to use this fuzzer are:
 
-1. clone repository
-```
+```bash
+# clone repository
 git clone https://github.com/scratch-bug/scratch_fuzzilli.git
-```
 
-2. patch v8 with running `Tools/patch_v8.py`
-need to modify V8 so that Fuzzilli can better track transitions. simply run patch_v8.py targeting the V8 directory once. 
-```
+# patch v8 with running Tools/patch_v8.py
 python3 Tools/patch_v8.py /path/to/v8
-```
 
-3. build v8 with fuzzbuild args
+# build v8 with fuzzbuild args
+ninja -C /path/to/fuzzbuild d8
 
-4. Compile the fuzzer
-```
+# Compile the fuzzer
 swift build [-c release]
-```
 
-5. Run the fuzzer
-```
+# Run the fuzzer
 swift run [-c release] FuzzilliCli --profile=<profile> [other cli options] /path/to/d8
+
 ```
 
-### Mutator
+<br>
+
+### Mutator Upgrade
 
 In addition to the existing mutators, we have implemented ElementsKindMutator and ICTransitionMutator to specifically focus on state transitions. These are not included in the main branch, so you must switch to the mutator branch to use them.
-```
+```bash
+# connect to git branches
 git fetch origin
+
+# change branch to mutator
 git checkout -b mutator origin/mutator
 ```
+
+<br>
 
 ## Concept
 
@@ -60,12 +68,19 @@ Note: Weights for specific state transitions and Mutators can be reconfigured by
 
 Through these improvements, the fuzzer is designed to induce a higher frequency of vulnerable state transitions within the JavaScript engine.
 
+<br>
 
 ## Result
-As of 2025-12-20, a total of 28 crashes were found, and 5 bugs were fixed.
+We fuzzed the V8 JavaScript engine from October 1, 2025, to December 20, 2025, discovering 28 crashes and fixing 5 bugs.
+
+<br>
 
 ## Disclaimer
 
-This is not an officially supported Google product.
+This is not an officially supported Google product.<br>
+Customized by BoB 14th Scratch BugBug! Team.
 
-Customized by BOB 14th Scratch BugBug! Team.
+<br>
+
+## Contact
+E-mail : kmc0487@gmail.com
