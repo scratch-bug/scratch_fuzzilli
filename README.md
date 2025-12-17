@@ -62,6 +62,8 @@ Key Improvements:
 3. Weighted Corpus based on Transitions: We assigned weights to the corpus based on state transition types. By enabling specific d8 options (e.g., --trace-elements), V8 outputs logs corresponding to these transitions. Fuzzilli is configured to track and parse these logs directly to apply appropriate weights.
 4. State-Transition Mutators: We developed custom Mutators dedicated to state transitions. Currently, ElementsKindTransitionMutator and ICTransitionMutator are implemented, with plans to add more in the future.
 Note: Weights for specific state transitions and Mutators can be reconfigured by directly modifying the source code.
+
+
 ![Fuzzer_Workflow](assets/fuzzing_workflow.png)
 
 
