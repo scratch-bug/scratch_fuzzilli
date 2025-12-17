@@ -15,7 +15,6 @@
 - State Transition Corpus Generation: Generates corpora focused on state transitions using CodeQL and Gemini.
 - Weighted Corpus Scoring: Applies scoring bonuses to the corpus based on specific state transitions.
 - State Transition Mutator: Introduces a dedicated mutator designed to handle state transitions.
-<br>
 
 ## Install
 Scratch Fuzzilli basically supports Linux(x64).<br>
@@ -39,8 +38,6 @@ swift run [-c release] FuzzilliCli --profile=<profile> [other cli options] /path
 
 ```
 
-<br>
-
 ### Mutator Upgrade
 
 In addition to the existing mutators, we have implemented ElementsKindMutator and ICTransitionMutator to specifically focus on state transitions. These are not included in the main branch, so you must switch to the mutator branch to use them.
@@ -51,8 +48,6 @@ git fetch origin
 # change branch to mutator
 git checkout -b mutator origin/mutator
 ```
-
-<br>
 
 ## Concept
 
@@ -68,19 +63,13 @@ Note: Weights for specific state transitions and Mutators can be reconfigured by
 
 Through these improvements, the fuzzer is designed to induce a higher frequency of vulnerable state transitions within the JavaScript engine.
 
-<br>
+### Fuzzer Workflow
+The Scratch Fuzzilli fuzzer works with the following workflow.
+![Fuzzer_Workflow](assets/fuzzer_workflow.png)
 
 ## Result
 We fuzzed the V8 JavaScript engine from October 1, 2025, to December 20, 2025, discovering 28 crashes and fixing 5 bugs.
 
-<br>
-
 ## Disclaimer
-
 This is not an officially supported Google product.<br>
 Customized by BoB 14th Scratch BugBug! Team.
-
-<br>
-
-## Contact
-E-mail : kmc0487@gmail.com
