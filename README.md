@@ -1,4 +1,4 @@
-# Scratch Fuzzilli
+![Scratch Fuzzilli Banner](assets/banner.png)
 
 A state aware fuzzer that improves on the existing Fuzzilli (https://github.com/googleprojectzero/fuzzilli)
 
