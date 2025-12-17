@@ -74,7 +74,7 @@ The Scratch Fuzzilli fuzzer works with the following workflow.
 ![Fuzzer_Workflow](assets/fuzzer_workflow.png)
 
 ## Result
-We fuzzed the V8 JavaScript engine from October 1, 2025, to December 20, 2025, discovering 28 crashes and fixing 5 bugs.
+We fuzzed the V8 JavaScript engine from 2025.10.1 to 2025.12.20, discovering 28 crashes and fixing 5 bugs.
 
 ## Disclaimer
 This is not an officially supported Google product.<br>
