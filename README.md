@@ -64,14 +64,17 @@ Key Improvements:
 Note: Weights for specific state transitions and Mutators can be reconfigured by directly modifying the source code.
 
 
-![Fuzzer_Workflow](assets/fuzzing_workflow.png)
+![All_Workflow](assets/all_workflow.png)
 
 
 Through these improvements, the fuzzer is designed to induce a higher frequency of vulnerable state transitions within the JavaScript engine.
 
 ### Fuzzer Workflow
-The Scratch Fuzzilli fuzzer works with the following workflow.
+We customized Fuzzilli with the following workflow.
 ![Fuzzer_Workflow](assets/fuzzer_workflow.png)
+
+The Scratch Fuzzilli fuzzer works with the following workflow.
+![Fuzzing_Workflow](assets/fuzzing_workflow.png)
 
 ## Result
 We fuzzed the V8 JavaScript engine from 2025.10.1 to 2025.12.20, discovering 28 crashes and fixing 5 bugs.
